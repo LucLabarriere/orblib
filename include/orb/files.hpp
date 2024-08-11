@@ -27,6 +27,7 @@ namespace orb
         auto is_dir() -> bool;
         auto is_file() -> bool;
         auto ls() -> result<std::vector<orb::path>>;
+        void remove();
 
         [[nodiscard]] static auto exists(std::string_view path) -> bool;
         [[nodiscard]] static auto readable(std::string_view path) -> bool;

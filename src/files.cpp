@@ -120,6 +120,11 @@ namespace orb
         return res;
     }
 
+    void path::remove()
+    {
+        std::remove(m_path.data());
+    }
+
     auto path::filename() const -> std::string_view
     {
         const auto pos = m_path.find_last_of('/');

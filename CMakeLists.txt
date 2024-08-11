@@ -10,9 +10,8 @@ add_library(orblib      STATIC src/format.cpp
                                src/files.cpp)
 add_library(orb::orblib ALIAS orblib)
 
-target_include_directories(orblib PUBLIC include)
 target_compile_features(orblib    PUBLIC cxx_std_23)
-target_compile_definitions(orblib PUBLIC ORB_COMPILER="${CMAKE_CXX_COMPILER}")
+target_include_directories(orblib PUBLIC include)
 
 if (${ORB_ASSERT})
   target_compile_definitions(orblib PUBLIC ORB_ASSERT)
