@@ -5,10 +5,10 @@
 //
 // For the license information refer to format.h.
 
-#ifndef FMT_ARGS_H_
-#define FMT_ARGS_H_
+#ifndef ORBFMT_ARGS_H_
+#define ORBFMT_ARGS_H_
 
-#ifndef FMT_MODULE
+#ifndef ORBFMT_MODULE
 #  include <functional>  // std::reference_wrapper
 #  include <memory>      // std::unique_ptr
 #  include <vector>
@@ -16,7 +16,7 @@
 
 #include "format.h"  // std_string_view
 
-FMT_BEGIN_NAMESPACE
+ORBFMT_BEGIN_NAMESPACE
 
 namespace detail {
 
@@ -46,10 +46,10 @@ class dynamic_arg_list {
     T value;
 
     template <typename Arg>
-    FMT_CONSTEXPR typed_node(const Arg& arg) : value(arg) {}
+    ORBFMT_CONSTEXPR typed_node(const Arg& arg) : value(arg) {}
 
     template <typename Char>
-    FMT_CONSTEXPR typed_node(const basic_string_view<Char>& arg)
+    ORBFMT_CONSTEXPR typed_node(const basic_string_view<Char>& arg)
         : value(arg.data(), arg.size()) {}
   };
 
@@ -74,7 +74,7 @@ class dynamic_arg_list {
  */
 template <typename Context>
 class dynamic_format_arg_store
-#if FMT_GCC_VERSION && FMT_GCC_VERSION < 409
+#if ORBFMT_GCC_VERSION && ORBFMT_GCC_VERSION < 409
     // Workaround a GCC template argument substitution bug.
     : public basic_format_args<Context>
 #endif
@@ -216,13 +216,13 @@ class dynamic_format_arg_store
   /// Reserves space to store at least `new_cap` arguments including
   /// `new_cap_named` named arguments.
   void reserve(size_t new_cap, size_t new_cap_named) {
-    FMT_ASSERT(new_cap >= new_cap_named,
+    ORBFMT_ASSERT(new_cap >= new_cap_named,
                "Set of arguments includes set of named arguments");
     data_.reserve(new_cap);
     named_info_.reserve(new_cap_named);
   }
 };
 
-FMT_END_NAMESPACE
+ORBFMT_END_NAMESPACE
 
-#endif  // FMT_ARGS_H_
+#endif  // ORBFMT_ARGS_H_

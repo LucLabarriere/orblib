@@ -5,76 +5,76 @@
 //
 // For the license information refer to format.h.
 
-#ifndef FMT_OS_H_
-#define FMT_OS_H_
+#ifndef ORBFMT_OS_H_
+#define ORBFMT_OS_H_
 
 #include "format.h"
 
-#ifndef FMT_MODULE
+#ifndef ORBFMT_MODULE
 #  include <cerrno>
 #  include <cstddef>
 #  include <cstdio>
 #  include <system_error>  // std::system_error
 
-#  if FMT_HAS_INCLUDE(<xlocale.h>)
+#  if ORBFMT_HAS_INCLUDE(<xlocale.h>)
 #    include <xlocale.h>  // LC_NUMERIC_MASK on macOS
 #  endif
-#endif  // FMT_MODULE
+#endif  // ORBFMT_MODULE
 
-#ifndef FMT_USE_FCNTL
+#ifndef ORBFMT_USE_FCNTL
 // UWP doesn't provide _pipe.
-#  if FMT_HAS_INCLUDE("winapifamily.h")
+#  if ORBFMT_HAS_INCLUDE("winapifamily.h")
 #    include <winapifamily.h>
 #  endif
-#  if (FMT_HAS_INCLUDE(<fcntl.h>) || defined(__APPLE__) || \
+#  if (ORBFMT_HAS_INCLUDE(<fcntl.h>) || defined(__APPLE__) || \
        defined(__linux__)) &&                              \
       (!defined(WINAPI_FAMILY) ||                          \
        (WINAPI_FAMILY == WINAPI_FAMILY_DESKTOP_APP))
 #    include <fcntl.h>  // for O_RDONLY
-#    define FMT_USE_FCNTL 1
+#    define ORBFMT_USE_FCNTL 1
 #  else
-#    define FMT_USE_FCNTL 0
+#    define ORBFMT_USE_FCNTL 0
 #  endif
 #endif
 
-#ifndef FMT_POSIX
+#ifndef ORBFMT_POSIX
 #  if defined(_WIN32) && !defined(__MINGW32__)
 // Fix warnings about deprecated symbols.
-#    define FMT_POSIX(call) _##call
+#    define ORBFMT_POSIX(call) _##call
 #  else
-#    define FMT_POSIX(call) call
+#    define ORBFMT_POSIX(call) call
 #  endif
 #endif
 
-// Calls to system functions are wrapped in FMT_SYSTEM for testability.
-#ifdef FMT_SYSTEM
-#  define FMT_HAS_SYSTEM
-#  define FMT_POSIX_CALL(call) FMT_SYSTEM(call)
+// Calls to system functions are wrapped in ORBFMT_SYSTEM for testability.
+#ifdef ORBFMT_SYSTEM
+#  define ORBFMT_HAS_SYSTEM
+#  define ORBFMT_POSIX_CALL(call) ORBFMT_SYSTEM(call)
 #else
-#  define FMT_SYSTEM(call) ::call
+#  define ORBFMT_SYSTEM(call) ::call
 #  ifdef _WIN32
 // Fix warnings about deprecated symbols.
-#    define FMT_POSIX_CALL(call) ::_##call
+#    define ORBFMT_POSIX_CALL(call) ::_##call
 #  else
-#    define FMT_POSIX_CALL(call) ::call
+#    define ORBFMT_POSIX_CALL(call) ::call
 #  endif
 #endif
 
 // Retries the expression while it evaluates to error_result and errno
 // equals to EINTR.
 #ifndef _WIN32
-#  define FMT_RETRY_VAL(result, expression, error_result) \
+#  define ORBFMT_RETRY_VAL(result, expression, error_result) \
     do {                                                  \
       (result) = (expression);                            \
     } while ((result) == (error_result) && errno == EINTR)
 #else
-#  define FMT_RETRY_VAL(result, expression, error_result) result = (expression)
+#  define ORBFMT_RETRY_VAL(result, expression, error_result) result = (expression)
 #endif
 
-#define FMT_RETRY(result, expression) FMT_RETRY_VAL(result, expression, -1)
+#define ORBFMT_RETRY(result, expression) ORBFMT_RETRY_VAL(result, expression, -1)
 
-FMT_BEGIN_NAMESPACE
-FMT_BEGIN_EXPORT
+ORBFMT_BEGIN_NAMESPACE
+ORBFMT_BEGIN_EXPORT
 
 /**
  * A reference to a null-terminated string. It can be constructed from a C
@@ -111,14 +111,14 @@ using cstring_view = basic_cstring_view<char>;
 using wcstring_view = basic_cstring_view<wchar_t>;
 
 #ifdef _WIN32
-FMT_API const std::error_category& system_category() noexcept;
+ORBFMT_API const std::error_category& system_category() noexcept;
 
 namespace detail {
-FMT_API void format_windows_error(buffer<char>& out, int error_code,
+ORBFMT_API void format_windows_error(buffer<char>& out, int error_code,
                                   const char* message) noexcept;
 }
 
-FMT_API std::system_error vwindows_error(int error_code, string_view format_str,
+ORBFMT_API std::system_error vwindows_error(int error_code, string_view format_str,
                                          format_args args);
 
 /**
@@ -154,7 +154,7 @@ std::system_error windows_error(int error_code, string_view message,
 
 // Reports a Windows error without throwing an exception.
 // Can be used to report errors from destructors.
-FMT_API void report_windows_error(int error_code, const char* message) noexcept;
+ORBFMT_API void report_windows_error(int error_code, const char* message) noexcept;
 #else
 inline auto system_category() noexcept -> const std::error_category& {
   return std::system_category();
@@ -186,7 +186,7 @@ class buffered_file {
   buffered_file() noexcept : file_(nullptr) {}
 
   // Destroys the object closing the file it represents if any.
-  FMT_API ~buffered_file() noexcept;
+  ORBFMT_API ~buffered_file() noexcept;
 
  public:
   buffered_file(buffered_file&& other) noexcept : file_(other.file_) {
@@ -201,15 +201,15 @@ class buffered_file {
   }
 
   // Opens a file.
-  FMT_API buffered_file(cstring_view filename, cstring_view mode);
+  ORBFMT_API buffered_file(cstring_view filename, cstring_view mode);
 
   // Closes the file.
-  FMT_API void close();
+  ORBFMT_API void close();
 
   // Returns the pointer to a FILE object representing this file.
   auto get() const noexcept -> FILE* { return file_; }
 
-  FMT_API auto descriptor() const -> int;
+  ORBFMT_API auto descriptor() const -> int;
 
   template <typename... T>
   inline void print(string_view fmt, const T&... args) {
@@ -219,7 +219,7 @@ class buffered_file {
   }
 };
 
-#if FMT_USE_FCNTL
+#if ORBFMT_USE_FCNTL
 
 // A file. Closed file is represented by a file object with descriptor -1.
 // Methods that are not declared with noexcept may throw
@@ -227,7 +227,7 @@ class buffered_file {
 // closing the file multiple times will cause a crash on Windows rather
 // than an exception. You can get standard behavior by overriding the
 // invalid parameter handler with _set_invalid_parameter_handler.
-class FMT_API file {
+class ORBFMT_API file {
  private:
   int fd_;  // File descriptor.
 
@@ -239,12 +239,12 @@ class FMT_API file {
  public:
   // Possible values for the oflag argument to the constructor.
   enum {
-    RDONLY = FMT_POSIX(O_RDONLY),  // Open for reading only.
-    WRONLY = FMT_POSIX(O_WRONLY),  // Open for writing only.
-    RDWR = FMT_POSIX(O_RDWR),      // Open for reading and writing.
-    CREATE = FMT_POSIX(O_CREAT),   // Create if the file doesn't exist.
-    APPEND = FMT_POSIX(O_APPEND),  // Open in append mode.
-    TRUNC = FMT_POSIX(O_TRUNC)     // Truncate the content of the file.
+    RDONLY = ORBFMT_POSIX(O_RDONLY),  // Open for reading only.
+    WRONLY = ORBFMT_POSIX(O_WRONLY),  // Open for writing only.
+    RDWR = ORBFMT_POSIX(O_RDWR),      // Open for reading and writing.
+    CREATE = ORBFMT_POSIX(O_CREAT),   // Create if the file doesn't exist.
+    APPEND = ORBFMT_POSIX(O_APPEND),  // Open in append mode.
+    TRUNC = ORBFMT_POSIX(O_TRUNC)     // Truncate the content of the file.
   };
 
   // Constructs a file object which doesn't represent any file.
@@ -309,7 +309,7 @@ class FMT_API file {
 #  endif
 };
 
-struct FMT_API pipe {
+struct ORBFMT_API pipe {
   file read_end;
   file write_end;
 
@@ -362,12 +362,12 @@ class file_buffer final : public buffer<char> {
  private:
   file file_;
 
-  FMT_API static void grow(buffer<char>& buf, size_t);
+  ORBFMT_API static void grow(buffer<char>& buf, size_t);
 
  public:
-  FMT_API file_buffer(cstring_view path, const ostream_params& params);
-  FMT_API file_buffer(file_buffer&& other) noexcept;
-  FMT_API ~file_buffer();
+  ORBFMT_API file_buffer(cstring_view path, const ostream_params& params);
+  ORBFMT_API file_buffer(file_buffer&& other) noexcept;
+  ORBFMT_API ~file_buffer();
 
   void flush() {
     if (size() == 0) return;
@@ -387,9 +387,9 @@ constexpr auto buffer_size = detail::buffer_size();
 
 /// A fast output stream for writing from a single thread. Writing from
 /// multiple threads without external synchronization may result in a data race.
-class FMT_API ostream {
+class ORBFMT_API ostream {
  private:
-  FMT_MSC_WARNING(suppress : 4251)
+  ORBFMT_MSC_WARNING(suppress : 4251)
   detail::file_buffer buffer_;
 
   ostream(cstring_view path, const detail::ostream_params& params)
@@ -431,9 +431,9 @@ template <typename... T>
 inline auto output_file(cstring_view path, T... params) -> ostream {
   return {path, detail::ostream_params(params...)};
 }
-#endif  // FMT_USE_FCNTL
+#endif  // ORBFMT_USE_FCNTL
 
-FMT_END_EXPORT
-FMT_END_NAMESPACE
+ORBFMT_END_EXPORT
+ORBFMT_END_NAMESPACE
 
-#endif  // FMT_OS_H_
+#endif  // ORBFMT_OS_H_

@@ -5,10 +5,10 @@
 //
 // For the license information refer to format.h.
 
-#ifndef FMT_OSTREAM_H_
-#define FMT_OSTREAM_H_
+#ifndef ORBFMT_OSTREAM_H_
+#define ORBFMT_OSTREAM_H_
 
-#ifndef FMT_MODULE
+#ifndef ORBFMT_MODULE
 #  include <fstream>  // std::filebuf
 #endif
 
@@ -22,7 +22,7 @@
 
 #include "chrono.h"  // formatbuf
 
-FMT_BEGIN_NAMESPACE
+ORBFMT_BEGIN_NAMESPACE
 namespace detail {
 
 // Generate a unique explicit instantion in every translation unit using a tag
@@ -35,7 +35,7 @@ class file_access {
   friend auto get_file(BufType& obj) -> FILE* { return obj.*FileMemberPtr; }
 };
 
-#if FMT_MSC_VERSION
+#if ORBFMT_MSC_VERSION
 template class file_access<file_access_tag, std::filebuf,
                            &std::filebuf::_Myfile>;
 auto get_file(std::filebuf&) -> FILE*;
@@ -44,12 +44,12 @@ auto get_file(std::filebuf&) -> FILE*;
 inline auto write_ostream_unicode(std::ostream& os, orb::string_view data)
     -> bool {
   FILE* f = nullptr;
-#if FMT_MSC_VERSION && FMT_USE_RTTI
+#if ORBFMT_MSC_VERSION && ORBFMT_USE_RTTI
   if (auto* buf = dynamic_cast<std::filebuf*>(os.rdbuf()))
     f = get_file(*buf);
   else
     return false;
-#elif defined(_WIN32) && defined(__GLIBCXX__) && FMT_USE_RTTI
+#elif defined(_WIN32) && defined(__GLIBCXX__) && ORBFMT_USE_RTTI
   auto* rdbuf = os.rdbuf();
   if (auto* sfbuf = dynamic_cast<__gnu_cxx::stdio_sync_filebuf<char>*>(rdbuf))
     f = sfbuf->file();
@@ -96,7 +96,7 @@ template <typename Char, typename T>
 void format_value(buffer<Char>& buf, const T& value) {
   auto&& format_buf = formatbuf<std::basic_streambuf<Char>>(buf);
   auto&& output = std::basic_ostream<Char>(&format_buf);
-#if !defined(FMT_STATIC_THOUSANDS_SEPARATOR)
+#if !defined(ORBFMT_STATIC_THOUSANDS_SEPARATOR)
   output.imbue(std::locale::classic());  // The default is always unlocalized.
 #endif
   output << value;
@@ -159,7 +159,7 @@ inline void vprint_directly(std::ostream& os, string_view format_str,
 
 }  // namespace detail
 
-FMT_EXPORT template <typename Char>
+ORBFMT_EXPORT template <typename Char>
 void vprint(std::basic_ostream<Char>& os,
             basic_string_view<type_identity_t<Char>> format_str,
             typename detail::vformat_args<Char>::type args) {
@@ -176,7 +176,7 @@ void vprint(std::basic_ostream<Char>& os,
  *
  *     orb::print(cerr, "Don't {}!", "panic");
  */
-FMT_EXPORT template <typename... T>
+ORBFMT_EXPORT template <typename... T>
 void print(std::ostream& os, format_string<T...> fmt, T&&... args) {
   const auto& vargs = orb::make_format_args(args...);
   if (detail::use_utf8())
@@ -185,7 +185,7 @@ void print(std::ostream& os, format_string<T...> fmt, T&&... args) {
     detail::vprint_directly(os, fmt, vargs);
 }
 
-FMT_EXPORT
+ORBFMT_EXPORT
 template <typename... Args>
 void print(std::wostream& os,
            basic_format_string<wchar_t, type_identity_t<Args>...> fmt,
@@ -193,12 +193,12 @@ void print(std::wostream& os,
   vprint(os, fmt, orb::make_format_args<buffered_context<wchar_t>>(args...));
 }
 
-FMT_EXPORT template <typename... T>
+ORBFMT_EXPORT template <typename... T>
 void println(std::ostream& os, format_string<T...> fmt, T&&... args) {
   orb::print(os, "{}\n", orb::format(fmt, std::forward<T>(args)...));
 }
 
-FMT_EXPORT
+ORBFMT_EXPORT
 template <typename... Args>
 void println(std::wostream& os,
              basic_format_string<wchar_t, type_identity_t<Args>...> fmt,
@@ -206,6 +206,6 @@ void println(std::wostream& os,
   print(os, L"{}\n", orb::format(fmt, std::forward<Args>(args)...));
 }
 
-FMT_END_NAMESPACE
+ORBFMT_END_NAMESPACE
 
-#endif  // FMT_OSTREAM_H_
+#endif  // ORBFMT_OSTREAM_H_
