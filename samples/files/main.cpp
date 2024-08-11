@@ -8,6 +8,8 @@ auto main(int, char** argv) -> int
     orb::println("'{}' is writable ? -> {}", p1.data(), p1.writable());
     orb::println("'{}' is executable ? -> {}", p1.data(), p1.executable());
     orb::println("'{}' exists ? -> {}", p1.data(), p1.exists());
+    orb::println("'{}' has filename: '{}'", p1.data(), p1.filename());
+    orb::println("'{}' has extension: '{}'", p1.data(), p1.extension());
 
     orb::path p2(argv[0]);
     orb::println("'{}' is readable ? -> {}", p2.data(), p2.readable());
@@ -15,6 +17,9 @@ auto main(int, char** argv) -> int
     orb::println("'{}' is executable ? -> {}", p2.data(), p2.executable());
     orb::println("'{}' exists ? -> {}", p2.data(), p2.exists());
     orb::println("'{}' is directory ? -> {}", p2.data(), p2.is_dir());
+
+    orb::println("'{}' has filename: '{}'", p2.data(), p2.filename());
+    orb::println("'{}' has extension: '{}'", p2.data(), p2.extension());
 
     auto res = orb::path::ls(argv[0]);
     if (res.is_error())
@@ -29,5 +34,6 @@ auto main(int, char** argv) -> int
             orb::println(" - {}", f.data());
         }
     }
+
     return 0;
 }
