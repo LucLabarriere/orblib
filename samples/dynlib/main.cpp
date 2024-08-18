@@ -24,16 +24,16 @@ auto main(int, char** arv) -> int
         orb::panic("Could not load dynamic library {}", lib_path.data());
     }
 
-    auto* f = library.get_func(orb::orb_testlibfunc, "orb_testlibfunc");
+    auto func = library.get_func<decltype(&orb::orb_testlibfunc)>("orb_testlibfunc");
 
-    if (!f)
+    if (!func)
     {
         orb::println("Error occured: {}", library.get_err());
         orb::panic("Could not load function");
     }
 
     orb::println("- Executing 'void testlibfunc()'");
-    f();
+    func();
 
     return 0;
 }

@@ -39,7 +39,7 @@ namespace orb
         m_handle = nullptr;
     }
 
-    auto dynlib::get_func(std::string_view fn_name) -> fn_handle
+    auto dynlib::get_func(std::string_view fn_name) -> fn_void_handle
     {
         return dlsym(m_handle, fn_name.data());
     }

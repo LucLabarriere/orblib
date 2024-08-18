@@ -43,10 +43,10 @@ namespace orb
         m_handle = nullptr;
     }
 
-    auto dynlib::get_func(std::string_view fn_name) -> fn_handle
+    auto dynlib::get_func(std::string_view fn_name) -> fn_void_handle
     {
         m_last_info = fn_name;
-        return (fn_handle)GetProcAddress(static_cast<HMODULE>(m_handle), fn_name.data());
+        return (fn_void_handle)GetProcAddress(static_cast<HMODULE>(m_handle), fn_name.data());
     }
 
     auto dynlib::get_err() -> std::string_view

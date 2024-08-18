@@ -8,8 +8,8 @@ namespace orb
     class dynlib
     {
     public:
-        using fn_handle  = void*;
-        using lib_handle = void*;
+        using fn_void_handle = void*;
+        using lib_handle     = void*;
 
         dynlib(const dynlib&)                    = delete;
         auto operator=(const dynlib&) -> dynlib& = delete;
@@ -24,12 +24,12 @@ namespace orb
         void close();
         auto get_err() -> std::string_view;
 
-        [[nodiscard]] auto get_func(std::string_view fn_name) -> fn_handle;
+        [[nodiscard]] auto get_func(std::string_view fn_name) -> fn_void_handle;
 
-        template <typename TFunc>
-        [[nodiscard]] auto get_func(TFunc*, std::string_view fn_name) -> TFunc*
+        template <typename FuncPointer>
+        [[nodiscard]] auto get_func(std::string_view fn_name) -> FuncPointer
         {
-            return reinterpret_cast<TFunc*>(get_func(fn_name)); // NOLINT
+            return reinterpret_cast<FuncPointer>(get_func(fn_name)); // NOLINT
         }
 
         [[nodiscard]] auto is_valid() -> bool
