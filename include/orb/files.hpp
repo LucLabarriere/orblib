@@ -1,6 +1,8 @@
 #pragma once
 
 #include "orb/result.hpp"
+#include "orb/platform.hpp"
+
 #include <string>
 #include <vector>
 
@@ -22,7 +24,6 @@ namespace orb
 
         auto exists() -> bool;
         auto readable() -> bool;
-        auto writable() -> bool;
         auto executable() -> bool;
         auto is_dir() -> bool;
         auto is_file() -> bool;
@@ -31,7 +32,6 @@ namespace orb
 
         [[nodiscard]] static auto exists(std::string_view path) -> bool;
         [[nodiscard]] static auto readable(std::string_view path) -> bool;
-        [[nodiscard]] static auto writable(std::string_view path) -> bool;
         [[nodiscard]] static auto executable(std::string_view path) -> bool;
         [[nodiscard]] static auto is_dir(std::string_view path) -> bool;
         [[nodiscard]] static auto is_file(std::string_view path) -> bool;
@@ -59,6 +59,12 @@ namespace orb
             return *this;
         }
 
+        auto operator+=(char rhs) -> path&
+        {
+            m_path += rhs;
+            return *this;
+        }
+
         friend auto operator+(path lhs, const path& rhs) -> path
         {
             lhs += rhs;
@@ -69,6 +75,19 @@ namespace orb
         {
             lhs += rhs;
             return lhs;
+        }
+
+        friend auto operator+(path lhs, char rhs) -> path
+        {
+            lhs += rhs;
+            return lhs;
+        }
+
+        [[nodiscard]] auto slash(std::string_view rhs) -> path {
+            orb::path p = m_path;
+            p += orb::path_separator;
+            p += rhs;
+            return p;
         }
 
     private:

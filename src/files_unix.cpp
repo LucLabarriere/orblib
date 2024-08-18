@@ -1,17 +1,10 @@
 #include "orb/files.hpp"
 
-// TODO Test on windows
-
-#ifdef WIN32
-#include <io.h>
-#define F_OK 0
-#define access _access
-#else
 #include <dirent.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
-#endif
+#include <fstream>
 
 namespace orb
 {
@@ -33,11 +26,6 @@ namespace orb
     auto path::readable() -> bool
     {
         return readable(m_path);
-    }
-
-    auto path::writable() -> bool
-    {
-        return writable(m_path);
     }
 
     auto path::executable() -> bool
@@ -68,11 +56,6 @@ namespace orb
     auto path::readable(std::string_view path) -> bool
     {
         return access(path.data(), R_OK) == 0;
-    }
-
-    auto path::writable(std::string_view path) -> bool
-    {
-        return access(path.data(), W_OK) == 0;
     }
 
     auto path::executable(std::string_view path) -> bool
@@ -127,7 +110,7 @@ namespace orb
 
     auto path::filename() const -> std::string_view
     {
-        const auto pos = m_path.find_last_of('/');
+        const auto pos = m_path.find_last_of(orb::path_separator);
         if (pos == std::string::npos)
         {
             return m_path;
@@ -151,7 +134,9 @@ namespace orb
 
     auto path::extension() const -> std::string_view
     {
-        const auto pos = m_path.find_last_of('.');
+        const std::string_view fname = filename();
+
+        const auto pos = fname.find_last_of('.');
         if (pos == std::string::npos)
         {
             return "";
@@ -162,7 +147,7 @@ namespace orb
 
     auto path::parent() const -> std::string_view
     {
-        const auto pos = m_path.find_last_of('/');
+        const auto pos = m_path.find_last_of(orb::path_separator);
         if (pos == std::string::npos)
         {
             return m_path;

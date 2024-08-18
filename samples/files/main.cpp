@@ -5,7 +5,6 @@ auto main(int, char** argv) -> int
 {
     orb::path p1("inexistant.txt");
     orb::println("'{}' is readable ? -> {}", p1.data(), p1.readable());
-    orb::println("'{}' is writable ? -> {}", p1.data(), p1.writable());
     orb::println("'{}' is executable ? -> {}", p1.data(), p1.executable());
     orb::println("'{}' exists ? -> {}", p1.data(), p1.exists());
     orb::println("'{}' has filename: '{}'", p1.data(), p1.filename());
@@ -13,7 +12,6 @@ auto main(int, char** argv) -> int
 
     orb::path p2(argv[0]);
     orb::println("'{}' is readable ? -> {}", p2.data(), p2.readable());
-    orb::println("'{}' is writable ? -> {}", p2.data(), p2.writable());
     orb::println("'{}' is executable ? -> {}", p2.data(), p2.executable());
     orb::println("'{}' exists ? -> {}", p2.data(), p2.exists());
     orb::println("'{}' is directory ? -> {}", p2.data(), p2.is_dir());
@@ -21,7 +19,7 @@ auto main(int, char** argv) -> int
     orb::println("'{}' has filename: '{}'", p2.data(), p2.filename());
     orb::println("'{}' has extension: '{}'", p2.data(), p2.extension());
 
-    auto res = orb::path::ls(argv[0]);
+    auto res = orb::path::ls(p2.parent());
     if (res.is_error())
     {
         orb::println("{}", res.error().get_message());

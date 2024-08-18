@@ -3,8 +3,6 @@
 #include <cstdlib>
 #include <dlfcn.h>
 
-// TODO Implement for windows
-
 namespace orb
 {
     dynlib::dynlib(dynlib&& other) noexcept : m_handle(other.m_handle)
@@ -20,9 +18,19 @@ namespace orb
         }
     }
 
-    void dynlib::open(std::string_view path)
+    void dynlib::open(const orb::path& p)
     {
-        m_handle = dlopen(path.data(), RTLD_LAZY);
+        if (p.extension() == "")
+        {
+            std::string path(p.data());
+            path += "/";
+            path += orb::dynlib_extension;
+            m_handle = dlopen(path.data(), RTLD_LAZY);
+        }
+        else
+        {
+            m_handle = dlopen(p.data(), RTLD_LAZY);
+        }
     }
 
     void dynlib::close()
@@ -38,6 +46,7 @@ namespace orb
 
     auto dynlib::get_err() -> std::string_view
     {
-        return dlerror();
+        static std::string e = orb::format("Dynlib error {}. Last param used: {}", dlerror(), m_last_info);
+        return e;
     }
 } // namespace orb

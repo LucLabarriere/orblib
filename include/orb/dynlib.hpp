@@ -1,6 +1,7 @@
 #pragma once
 
-#include <string_view>
+#include "orb/files.hpp"
+#include "orb/platform.hpp"
 
 namespace orb
 {
@@ -19,7 +20,7 @@ namespace orb
 
         auto operator=(dynlib&&) noexcept -> dynlib&;
 
-        void open(std::string_view path);
+        void open(const orb::path& p);
         void close();
         auto get_err() -> std::string_view;
 
@@ -36,7 +37,21 @@ namespace orb
             return m_handle != nullptr;
         };
 
+        static constexpr auto get_libfile_path(const orb::path& p) -> orb::path
+        {
+            if (p.extension() == "")
+            {
+                std::string path(p.data());
+                path += ".";
+                path += orb::dynlib_extension;
+                return { std::move(path) };
+            }
+
+            return p;
+        }
+
     private:
-        lib_handle m_handle { nullptr };
+        lib_handle  m_handle { nullptr };
+        std::string m_last_info = "";
     };
 } // namespace orb

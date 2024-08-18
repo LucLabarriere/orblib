@@ -13,7 +13,7 @@ namespace orb
         exit(1);
     }
 
-#ifdef HDJSHQKD
+#ifdef ORB_ASSERT
     template <typename... T>
     void assertion(bool condition, orb::format_string<T...> fmt, const char* f, int l, T&&... args)
     {

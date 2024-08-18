@@ -5,10 +5,16 @@ message(STATUS "orb::orblib version ${ORBLIB_VERSION}")
 
 project(orblib VERSION ${ORBLIB_VERSION})
 
-add_library(orblib      STATIC src/format.cpp
-                               src/dynlib.cpp
-                               src/files.cpp)
-add_library(orb::orblib ALIAS orblib)
+add_library(orblib      STATIC src/format.cpp)
+add_library(orb::orblib ALIAS  orblib)
+
+if (WIN32)
+  target_sources(orblib PRIVATE src/dynlib_windows.cpp
+                                src/files_windows.cpp)
+else()
+  target_sources(orblib PRIVATE src/dynlib_unix.cpp
+                                src/files_unix.cpp)
+endif()
 
 target_compile_features(orblib    PUBLIC cxx_std_23)
 target_include_directories(orblib PUBLIC include)
