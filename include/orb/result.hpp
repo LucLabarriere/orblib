@@ -4,8 +4,8 @@
 #include "orb/print.hpp"
 
 #include <optional>
-#include <variant>
 #include <string>
+#include <variant>
 
 namespace orb
 {
@@ -24,7 +24,7 @@ namespace orb
         }
         constexpr error_t(const error_t&)         = delete;
         constexpr error_t(error_t&& err) noexcept = default;
-        constexpr ~error_t() noexcept           = default;
+        constexpr ~error_t() noexcept             = default;
 
         auto operator=(const error_t&) -> error_t& = delete;
         auto operator=(error_t&&) -> error_t&      = delete;
@@ -42,8 +42,7 @@ namespace orb
     class result
     {
     public:
-        constexpr result(error_t&& err) noexcept
-            : m_variant(std::forward<error_t>(std::move(err)))
+        constexpr result(error_t&& err) noexcept : m_variant(std::forward<error_t>(std::move(err)))
         {
         }
         constexpr result(T&& v) noexcept : m_variant(std::forward<T>(std::move(v)))
@@ -102,8 +101,7 @@ namespace orb
     {
     public:
         constexpr result() noexcept = default;
-        constexpr result(error_t&& err) noexcept
-            : m_error(std::forward<error_t>(std::move(err)))
+        constexpr result(error_t&& err) noexcept : m_error(std::forward<error_t>(std::move(err)))
         {
         }
         constexpr result(const result&)     = delete;
