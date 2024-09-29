@@ -4,6 +4,13 @@
 
 namespace orb
 {
+#ifdef ORB_ASSERT
+    static constexpr bool assert_mode = true;
+#else
+    static constexpr bool assert_mode = false;
+#endif
+
+
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
 #define ORB_WINDOWS
     static constexpr bool on_windows = true;
