@@ -29,7 +29,7 @@ namespace orb
         }
         else
         {
-            m_handle = dlopen(p.data(), RTLD_LAZY);
+            m_handle = dlopen(p.data().data(), RTLD_LAZY);
         }
     }
 
