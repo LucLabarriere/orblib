@@ -136,15 +136,16 @@ namespace orb
             || std::same_as<T, timepoint<stopwatch>>;
     };
 
+    using seconds_t      = std::chrono::duration<float, std::ratio<1, 1>>;
+    using milliseconds_t = std::chrono::duration<float, std::milli>;
+    using microseconds_t = std::chrono::duration<float, std::micro>;
+    using nanoseconds_t  = std::chrono::duration<float, std::nano>;
+
     template <clock_std_type TClock>
     class watch
     {
     public:
-        using clock_t        = TClock;
-        using seconds_t      = std::chrono::duration<float, std::ratio<1, 1>>;
-        using milliseconds_t = std::chrono::duration<float, std::milli>;
-        using microseconds_t = std::chrono::duration<float, std::micro>;
-        using nanoseconds_t  = std::chrono::duration<float, std::nano>;
+        using clock_t = TClock;
 
         template <ratio_type TRatio>
         static inline auto dur(timepoint<watch> t0, timepoint<watch> t1) -> duration<TRatio>
