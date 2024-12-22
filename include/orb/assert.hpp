@@ -2,6 +2,7 @@
 
 #include "orb/print.hpp"
 #include "orb/utility.hpp"
+#include "orb/exception.hpp"
 
 #include <cstdlib>
 

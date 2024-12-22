@@ -35,7 +35,17 @@ namespace orb
             return *m_ptr;
         }
 
+        [[nodiscard]] auto operator*() const -> const T&
+        {
+            return *m_ptr;
+        }
+
         [[nodiscard]] auto operator->() -> T*
+        {
+            return m_ptr;
+        }
+
+        [[nodiscard]] auto operator->() const -> const T*
         {
             return m_ptr;
         }

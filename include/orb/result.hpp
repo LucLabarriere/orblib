@@ -2,6 +2,7 @@
 
 #include "orb/fmt/format.h"
 #include "orb/print.hpp"
+#include "orb/exception.hpp"
 
 #include <optional>
 #include <string>
@@ -79,11 +80,23 @@ namespace orb
             return m_variant.index() == 1;
         }
 
-        constexpr void throw_if_error() const
+        [[nodiscard]] auto unwrap() -> T
+        {
+            try
+            {
+                return std::move(std::get<T>(m_variant));
+            }
+            catch (const std::exception& e)
+            {
+                throw orb::exception(error().get_message());
+            };
+        }
+
+        constexpr void throw_if_error()
         {
             if (m_variant.index() == 0)
             {
-                throw;
+                throw orb::exception(error().get_message());
             }
         }
 
@@ -131,7 +144,7 @@ namespace orb
         {
             if (m_error.has_value())
             {
-                throw;
+                throw orb::exception(m_error.value().get_message());
             }
         }
 

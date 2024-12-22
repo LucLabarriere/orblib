@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.26)
+cmake_minimum_required(VERSION 3.22)
 
 set(ORBLIB_VERSION 0.1)
 message(STATUS "orb::orblib version ${ORBLIB_VERSION}")
