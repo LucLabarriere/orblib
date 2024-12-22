@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 3.26)
 
-set(ORBLIB_VERSION 0.0)
+set(ORBLIB_VERSION 0.1)
 message(STATUS "orb::orblib version ${ORBLIB_VERSION}")
 
-project(orblib VERSION ${ORBLIB_VERSION})
+project(orblib CXX VERSION ${ORBLIB_VERSION})
 
 add_library(orblib      STATIC src/format.cpp)
 add_library(orb::orblib ALIAS  orblib)
