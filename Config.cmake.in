@@ -1,0 +1,9 @@
+@PACKAGE_INIT@
+
+include(CMakeFindDependencyMacro)
+
+set(TARGETS_FILE "${CMAKE_CURRENT_LIST_DIR}/orblibTargets.cmake")
+
+if(NOT TARGET orb::orblib)
+  include("${TARGETS_FILE}")
+endif()
