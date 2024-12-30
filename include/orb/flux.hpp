@@ -15,7 +15,8 @@ namespace flux
         requires(!flux::detail::is_ref_adaptor<Seq>)
     [[nodiscard]] constexpr inline auto enumerate_mut(Seq&& seq)
     {
-        return flux::zip(flux::mut_ref(std::forward<Seq>(seq)).cursors(), flux::mut_ref(std::forward<Seq>(seq)));
+        return flux::zip(flux::mut_ref(std::forward<Seq>(seq)).cursors(),
+                         flux::mut_ref(std::forward<Seq>(seq)));
     }
 
     template <sequence... Seq>

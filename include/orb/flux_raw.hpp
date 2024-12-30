@@ -98,7 +98,11 @@
 #  define FLUX_ALWAYS_INLINE inline
 #endif
 
+#if defined(_MSC_VER)
+#define FLUX_NO_UNIQUE_ADDRESS [[msvc::no_unique_address]]
+#else
 #define FLUX_NO_UNIQUE_ADDRESS [[no_unique_address]]
+#endif
 
 #define FLUX_FOR(_flux_var_decl_, ...)                    \
     if (auto&& _flux_seq_ = __VA_ARGS__; true)           \
