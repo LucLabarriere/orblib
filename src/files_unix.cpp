@@ -1,18 +1,20 @@
 #include "orb/files.hpp"
 
+#include <array>
 #include <dirent.h>
+#include <fcntl.h>
+#include <fstream>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
-#include <fstream>
 
 namespace orb
 {
-    path::path(std::string path) : m_path(std::move(path))
+    path::path(string_type_t path) : m_path(std::move(path))
     {
     }
 
-    auto path::operator=(std::string_view str) -> path&
+    auto path::operator=(string_view_type_t str) -> path&
     {
         m_path = str;
         return *this;
@@ -20,64 +22,63 @@ namespace orb
 
     auto path::exists() -> bool
     {
-        return exists(m_path);
+        return exists(m_path.c_str());
     }
 
     auto path::readable() -> bool
     {
-        return readable(m_path);
+        return readable(m_path.c_str());
     }
 
     auto path::executable() -> bool
     {
-        return executable(m_path);
+        return executable(m_path.c_str());
     }
 
     auto path::is_dir() -> bool
     {
-        return is_dir(m_path);
+        return is_dir(m_path.c_str());
     }
 
     auto path::is_file() -> bool
     {
-        return is_file(m_path);
+        return is_file(m_path.c_str());
     }
 
     auto path::ls() -> result<std::vector<orb::path>>
     {
-        return ls(m_path);
+        return ls(m_path.c_str());
     }
 
-    auto path::exists(std::string_view path) -> bool
+    auto path::exists(const char_type_t* path) -> bool
     {
-        return access(path.data(), F_OK) == 0;
+        return access(path, F_OK) == 0;
     }
 
-    auto path::readable(std::string_view path) -> bool
+    auto path::readable(const char_type_t* path) -> bool
     {
-        return access(path.data(), R_OK) == 0;
+        return access(path, R_OK) == 0;
     }
 
-    auto path::executable(std::string_view path) -> bool
+    auto path::executable(const char_type_t* path) -> bool
     {
-        return access(path.data(), X_OK) == 0;
+        return access(path, X_OK) == 0;
     }
 
-    auto path::is_dir(std::string_view path) -> bool
+    auto path::is_dir(const char_type_t* path) -> bool
     {
         return !is_file(path);
     }
 
-    auto path::is_file(std::string_view path) -> bool
+    auto path::is_file(const char_type_t* path) -> bool
     {
-        struct stat paths
-        { };
+        struct stat paths {};
 
-        stat(path.data(), &paths);
+        stat(path, &paths);
         return S_ISREG(paths.st_mode);
     }
 
-    auto path::ls(std::string_view path) -> result<std::vector<orb::path>>
+    auto path::ls(const char_type_t* path) -> result<std::vector<orb::path>>
     {
         if (!is_dir(path))
         {
@@ -89,7 +90,7 @@ namespace orb
         struct dirent* dir {};
         DIR*           d {};
 
-        d = opendir(path.data());
+        d = opendir(path);
 
         if (d)
         {
@@ -108,7 +109,7 @@ namespace orb
         std::remove(m_path.data());
     }
 
-    auto path::filename() const -> std::string_view
+    auto path::filename() const -> string_view_type_t
     {
         const auto pos = m_path.find_last_of(orb::path_separator);
         if (pos == std::string::npos)
@@ -116,12 +117,12 @@ namespace orb
             return m_path;
         }
 
-        return std::string_view { m_path }.substr(pos + 1);
+        return string_view_type_t { m_path }.substr(pos + 1);
     }
 
-    auto path::basename() const -> std::string_view
+    auto path::basename() const -> string_view_type_t
     {
-        const std::string_view fname = filename();
+        const string_view_type_t fname = filename();
 
         const auto pos = fname.find_last_of('.');
         if (pos == std::string::npos)
@@ -129,12 +130,12 @@ namespace orb
             return fname;
         }
 
-        return std::string_view { fname }.substr(0, pos);
+        return string_view_type_t { fname }.substr(0, pos);
     }
 
-    auto path::extension() const -> std::string_view
+    auto path::extension() const -> string_view_type_t
     {
-        const std::string_view fname = filename();
+        const string_view_type_t fname = filename();
 
         const auto pos = fname.find_last_of('.');
         if (pos == std::string::npos)
@@ -142,10 +143,10 @@ namespace orb
             return "";
         }
 
-        return std::string_view { m_path }.substr(pos + 1);
+        return string_view_type_t { m_path }.substr(pos + 1);
     }
 
-    auto path::parent() const -> std::string_view
+    auto path::parent() const -> string_view_type_t
     {
         const auto pos = m_path.find_last_of(orb::path_separator);
         if (pos == std::string::npos)
@@ -153,7 +154,38 @@ namespace orb
             return m_path;
         }
 
-        return std::string_view { m_path }.substr(0, pos);
+        return string_view_type_t { m_path }.substr(0, pos);
+    }
+
+    auto path::read_file() const -> result<std::string>
+    {
+        const int fd = open(m_path.c_str(), O_RDONLY);
+
+        if (fd == -1)
+        {
+            return error_t { "{} does not exist", m_path };
+        }
+
+        std::array<char, 1024> buffer {};
+
+        ssize_t total_read = -1;
+        ssize_t read       = 0;
+
+        std::string content;
+
+        while (read != 0)
+        {
+            read = ::read(fd, buffer.data(), buffer.size());
+
+            if (read < 0)
+            {
+                return error_t { "Could not read {}", m_path };
+            }
+
+            content += string_view_type_t { buffer.data(), (size_t)read };
+        }
+
+        return {};
     }
 
 } // namespace orb

@@ -25,11 +25,11 @@ namespace orb
             std::string path(p.data());
             path += "/";
             path += orb::dynlib_extension;
-            m_handle = dlopen(path.data(), RTLD_LAZY);
+            m_handle = dlopen(path.c_str(), RTLD_LAZY);
         }
         else
         {
-            m_handle = dlopen(p.data().data(), RTLD_LAZY);
+            m_handle = dlopen(p.c_str(), RTLD_LAZY);
         }
     }
 
@@ -39,9 +39,9 @@ namespace orb
         m_handle = nullptr;
     }
 
-    auto dynlib::get_func(std::string_view fn_name) -> fn_void_handle
+    auto dynlib::get_func(const char* fn_name) -> fn_void_handle
     {
-        return dlsym(m_handle, fn_name.data());
+        return dlsym(m_handle, fn_name);
     }
 
     auto dynlib::get_err() -> std::string_view

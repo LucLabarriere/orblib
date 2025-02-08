@@ -24,10 +24,10 @@ namespace orb
         void close();
         auto get_err() -> std::string_view;
 
-        [[nodiscard]] auto get_func(std::string_view fn_name) -> fn_void_handle;
+        [[nodiscard]] auto get_func(const char* fn_name) -> fn_void_handle;
 
         template <typename FuncPointer>
-        [[nodiscard]] auto get_func(std::string_view fn_name) -> FuncPointer
+        [[nodiscard]] auto get_func(const char* fn_name) -> FuncPointer
         {
             return reinterpret_cast<FuncPointer>(get_func(fn_name)); // NOLINT
         }

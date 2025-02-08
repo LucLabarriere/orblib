@@ -19,7 +19,10 @@ auto main(int, char** argv) -> int
     orb::println("'{}' has filename: '{}'", p2.data(), p2.filename());
     orb::println("'{}' has extension: '{}'", p2.data(), p2.extension());
 
-    auto res = orb::path::ls(p2.parent());
+    const orb::path parent = std::string { p2.parent() };
+
+    auto res = orb::path::ls(parent.c_str());
+
     if (res.is_error())
     {
         orb::println("{}", res.error().get_message());
