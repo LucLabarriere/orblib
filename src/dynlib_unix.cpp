@@ -49,4 +49,17 @@ namespace orb
         static std::string e = orb::format("Dynlib error {}. Last param used: {}", dlerror(), m_last_info);
         return e;
     }
+
+    auto dynlib::get_libfile_path(const orb::path& p) -> orb::path
+    {
+        if (p.extension() == "")
+        {
+            std::string path(p.view());
+            path += ".";
+            path += orb::dynlib_extension;
+            return std::move(path);
+        }
+
+        return p;
+    }
 } // namespace orb

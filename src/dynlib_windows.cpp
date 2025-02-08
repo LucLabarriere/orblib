@@ -26,14 +26,12 @@ namespace orb
             std::string path(p.data());
             path += "/";
             path += orb::dynlib_extension;
-            m_last_info = path.data();
 
-            m_handle = (lib_handle)LoadLibrary(path.data());
+            m_handle = (lib_handle)LoadLibrary(path.c_str());
         }
         else
         {
-            m_last_info = p.data();
-            m_handle    = (lib_handle)LoadLibrary(p.data().data());
+            m_handle = (lib_handle)LoadLibrary(p.c_str());
         }
     }
 
@@ -43,13 +41,12 @@ namespace orb
         m_handle = nullptr;
     }
 
-    auto dynlib::get_func(std::string_view fn_name) -> fn_void_handle
+    auto dynlib::get_func(const char* fn_name) -> fn_void_handle
     {
-        m_last_info = fn_name;
-        return (fn_void_handle)GetProcAddress(static_cast<HMODULE>(m_handle), fn_name.data());
+        return (fn_void_handle)GetProcAddress(static_cast<HMODULE>(m_handle), fn_name);
     }
 
-    auto dynlib::get_err() -> std::string_view
+    auto dynlib::get_err() -> std::string
     {
         const auto err = GetLastError();
 
@@ -57,34 +54,36 @@ namespace orb
         {
         case ERROR_MOD_NOT_FOUND:
         {
-            static std::string e =
-                orb::format("DLL error {}. Module not found. Last param used: {}", err, m_last_info);
-            return e;
+            return orb::format("DLL error {}. Module not found", err);
         }
 
         case ERROR_BAD_EXE_FORMAT:
         {
-            static std::string e =
-                orb::format("DLL error {}. Bad executable format (32/64 bit mismatch). Last param used: {}",
-                            err,
-                            m_last_info);
-            return e;
+            return orb::format("DLL error {}. Bad executable format (32/64 bit mismatch)", err);
         }
 
         case ERROR_PROC_NOT_FOUND:
         {
-            static std::string e =
-                orb::format("DLL error {}. Function could not be found. Last param used: {}",
-                            err,
-                            m_last_info);
-            return e;
+            return orb::format("DLL error {}. Function could not be found", err);
         }
 
         default:
         {
-            static std::string e = orb::format("Unknown error {}. Last param used: {}", err, m_last_info);
-            return e;
+            return orb::format("Unknown error {}", err);
         }
         }
+    }
+
+    auto dynlib::get_libfile_path(const orb::path& p) -> orb::path
+    {
+        if (p.extension() == "")
+        {
+            std::string path(p.view());
+            path += ".";
+            path += orb::dynlib_extension;
+            return { std::move(path) };
+        }
+
+        return p;
     }
 } // namespace orb

@@ -4,7 +4,7 @@
 auto main(int, char** argv) -> int
 {
     orb::path p1("inexistant.txt");
-    orb::println("'{}' is readable ? -> {}", p1.data(), p1.readable());
+    orb::println("'{}' is readable ? -> {}", p1.c_str(), p1.readable());
     orb::println("'{}' is executable ? -> {}", p1.data(), p1.executable());
     orb::println("'{}' exists ? -> {}", p1.data(), p1.exists());
     orb::println("'{}' has filename: '{}'", p1.data(), p1.filename());
@@ -22,6 +22,9 @@ auto main(int, char** argv) -> int
     const orb::path parent = std::string { p2.parent() };
 
     auto res = orb::path::ls(parent.c_str());
+
+    orb::println("");
+    orb::println("Listing files in directory {}", parent.c_str());
 
     if (res.is_error())
     {

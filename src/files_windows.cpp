@@ -7,11 +7,11 @@
 
 namespace orb
 {
-    path::path(string_type_t path) : m_path(std::move(path))
+    path::path(std::string path) : m_path(std::move(path))
     {
     }
 
-    auto path::operator=(string_view_type_t str) -> path&
+    auto path::operator=(std::string_view str) -> path&
     {
         m_path = str;
         return *this;
@@ -47,22 +47,22 @@ namespace orb
         return ls(m_path.c_str());
     }
 
-    auto path::exists(const char_type_t* path) -> bool
+    auto path::exists(const char* path) -> bool
     {
         return std::filesystem::exists(path);
     }
 
-    auto path::readable(const char_type_t* path) -> bool
+    auto path::readable(const char* path) -> bool
     {
         std::ifstream fs(path);
         return (bool)fs;
     }
 
-    auto path::executable(const char_type_t* path) -> bool
+    auto path::executable(const char* path) -> bool
     {
-        const string_view_type_t p     = path;
-        const auto               pos   = p.find_last_of('/');
-        const auto               fname = pos == std::string::npos ? p : p.substr(pos + 1);
+        const std::string_view p     = path;
+        const auto             pos   = p.find_last_of('/');
+        const auto             fname = pos == std::string::npos ? p : p.substr(pos + 1);
 
         const auto epos = fname.find_last_of('.');
         if (epos == std::string::npos)
@@ -73,17 +73,17 @@ namespace orb
         return fname.substr(epos + 1) == "exe";
     }
 
-    auto path::is_dir(const char_type_t* p) -> bool
+    auto path::is_dir(const char* p) -> bool
     {
         return std::filesystem::is_directory(p);
     }
 
-    auto path::is_file(const char_type_t* p) -> bool
+    auto path::is_file(const char* p) -> bool
     {
         return std::filesystem::is_regular_file(p);
     }
 
-    auto path::ls(const char_type_t* p) -> result<std::vector<orb::path>>
+    auto path::ls(const char* p) -> result<std::vector<orb::path>>
     {
         if (!is_dir(p))
         {
@@ -104,7 +104,7 @@ namespace orb
         std::remove(m_path.data());
     }
 
-    auto path::filename() const -> string_view_type_t
+    auto path::filename() const -> std::string_view
     {
         const auto pos = m_path.find_last_of(orb::path_separator);
         if (pos == std::string::npos)
@@ -112,12 +112,12 @@ namespace orb
             return m_path;
         }
 
-        return string_view_type_t { m_path }.substr(pos + 1);
+        return std::string_view { m_path }.substr(pos + 1);
     }
 
-    auto path::basename() const -> string_view_type_t
+    auto path::basename() const -> std::string_view
     {
-        const string_view_type_t fname = filename();
+        const std::string_view fname = filename();
 
         const auto pos = fname.find_last_of('.');
         if (pos == std::string::npos)
@@ -128,9 +128,9 @@ namespace orb
         return fname.substr(0, pos);
     }
 
-    auto path::extension() const -> string_view_type_t
+    auto path::extension() const -> std::string_view
     {
-        const string_view_type_t fname = filename();
+        const std::string_view fname = filename();
 
         const auto pos = fname.find_last_of('.');
         if (pos == std::string::npos)
@@ -141,7 +141,7 @@ namespace orb
         return fname.substr(pos + 1);
     }
 
-    auto path::parent() const -> string_view_type_t
+    auto path::parent() const -> std::string_view
     {
         const auto pos = m_path.find_last_of(orb::path_separator);
         if (pos == std::string::npos)
@@ -149,18 +149,18 @@ namespace orb
             return m_path;
         }
 
-        return string_view_type_t { m_path }.substr(0, pos);
+        return std::string_view { m_path }.substr(0, pos);
     }
 
     auto path::read_file() const -> result<std::string>
     {
-        HANDLE hFile = CreateFileW(m_path.c_str(),
-                                   GENERIC_READ,
-                                   FILE_SHARE_READ,
-                                   nullptr,
-                                   OPEN_EXISTING,
-                                   FILE_ATTRIBUTE_NORMAL,
-                                   nullptr);
+        HANDLE hFile = CreateFile(m_path.c_str(),
+                                  GENERIC_READ,
+                                  FILE_SHARE_READ,
+                                  nullptr,
+                                  OPEN_EXISTING,
+                                  FILE_ATTRIBUTE_NORMAL,
+                                  nullptr);
 
         if (hFile == INVALID_HANDLE_VALUE)
         {

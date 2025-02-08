@@ -22,7 +22,7 @@ namespace orb
 
         void open(const orb::path& p);
         void close();
-        auto get_err() -> std::string_view;
+        auto get_err() -> std::string;
 
         [[nodiscard]] auto get_func(const char* fn_name) -> fn_void_handle;
 
@@ -37,21 +37,9 @@ namespace orb
             return m_handle != nullptr;
         };
 
-        static constexpr auto get_libfile_path(const orb::path& p) -> orb::path
-        {
-            if (p.extension() == "")
-            {
-                std::string path(p.data());
-                path += ".";
-                path += orb::dynlib_extension;
-                return { std::move(path) };
-            }
-
-            return p;
-        }
+        static auto get_libfile_path(const orb::path& p) -> orb::path;
 
     private:
         lib_handle  m_handle { nullptr };
-        std::string m_last_info = "";
     };
 } // namespace orb
