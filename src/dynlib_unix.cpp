@@ -44,10 +44,9 @@ namespace orb
         return dlsym(m_handle, fn_name);
     }
 
-    auto dynlib::get_err() -> std::string_view
+    auto dynlib::get_err() -> std::string
     {
-        static std::string e = orb::format("Dynlib error {}. Last param used: {}", dlerror(), m_last_info);
-        return e;
+        return orb::format("Dynlib error {}", dlerror());
     }
 
     auto dynlib::get_libfile_path(const orb::path& p) -> orb::path
