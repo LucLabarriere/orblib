@@ -2,6 +2,8 @@
 
 #include <chrono>
 
+#include <orb/fmt/format.h>
+
 namespace orb
 {
     template <typename T>
