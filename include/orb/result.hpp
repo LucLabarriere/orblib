@@ -1,8 +1,8 @@
 #pragma once
 
+#include "orb/exception.hpp"
 #include "orb/fmt/format.h"
 #include "orb/print.hpp"
-#include "orb/exception.hpp"
 
 #include <optional>
 #include <string>
@@ -92,14 +92,6 @@ namespace orb
             };
         }
 
-        constexpr void throw_if_error()
-        {
-            if (m_variant.index() == 0)
-            {
-                throw orb::exception(error().get_message());
-            }
-        }
-
         operator bool() const
         {
             return is_value();
@@ -146,6 +138,11 @@ namespace orb
             {
                 throw orb::exception(m_error.value().get_message());
             }
+        }
+
+        constexpr void unwrap() const
+        {
+            throw_if_error();
         }
 
     private:
