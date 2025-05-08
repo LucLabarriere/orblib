@@ -16,6 +16,8 @@ if (WIN32)
 else()
   target_sources(orblib PRIVATE src/dynlib_unix.cpp
                                 src/files_unix.cpp)
+
+  target_compile_options(orblib PRIVATE -fPIC)
 endif()
 
 target_compile_features(orblib
