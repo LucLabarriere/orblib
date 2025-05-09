@@ -13,7 +13,7 @@ auto main(int, char** arv) -> int
     orb::path lib_path = orb::dynlib::get_libfile_path(workdir.slash("sample_dynlib_testlib"));
 
     orb::println("- Workdir: {}", workdir.parent());
-    orb::println("- libfile: {}", lib_path.data());
+    orb::println("- libfile: {}", lib_path.view());
 
     orb::dynlib library;
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "orb/fmt/format.h"
+#include <fmt/format.h>
 #include <stdexcept>
 
 namespace orb
@@ -17,8 +17,8 @@ namespace orb
         }
 
         template <typename... Args>
-        exception(orb::format_string<Args...> fmt, Args&&... args) noexcept
-            : std::runtime_error(orb::format(fmt, std::forward<Args>(args)...))
+        exception(fmt::format_string<Args...> fmt, Args&&... args) noexcept
+            : std::runtime_error(fmt::format(fmt, std::forward<Args>(args)...))
         {
         }
     };

@@ -1,9 +1,9 @@
 #pragma once
 
 #include "orb/exception.hpp"
-#include "orb/fmt/format.h"
 #include "orb/print.hpp"
 
+#include <fmt/format.h>
 #include <optional>
 #include <string>
 #include <variant>
@@ -19,8 +19,8 @@ namespace orb
         }
 
         template <typename... Args>
-        constexpr error_t(orb::format_string<Args...> fmt, Args&&... args) noexcept
-            : m_message(orb::format(fmt, std::forward<Args>(args)...))
+        constexpr error_t(fmt::format_string<Args...> fmt, Args&&... args) noexcept
+            : m_message(fmt::format(fmt, std::forward<Args>(args)...))
         {
         }
         constexpr error_t(const error_t&)         = delete;

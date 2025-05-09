@@ -7,8 +7,12 @@ project(orblib
   LANGUAGES CXX
   VERSION   ${ORBLIB_VERSION})
 
-add_library(orblib      STATIC src/format.cpp)
+add_subdirectory(vendor)
+
+add_library(orblib      STATIC)
 add_library(orb::orblib ALIAS  orblib)
+
+target_link_libraries(orblib PUBLIC fmt::fmt)
 
 if (WIN32)
   target_sources(orblib PRIVATE src/dynlib_windows.cpp

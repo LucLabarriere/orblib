@@ -138,7 +138,7 @@ namespace orb
     template <typename T, typename... Args>
     [[nodiscard]] auto make_box(Args&&... args) -> box<T>
     {
-        T* ptr = new T(orb::forward<Args>(args)...);
+        T* ptr = new T(std::forward<Args>(args)...);
         return box(ptr);
     }
 

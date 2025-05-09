@@ -9,21 +9,21 @@
 namespace orb
 {
     template <typename... T>
-    [[noreturn]] void panic(orb::format_string<T...> fmt, T&&... args)
+    [[noreturn]] void panic(fmt::format_string<T...> fmt, T&&... args)
     {
-        orb::println(orb::move(fmt), orb::forward<T>(args)...);
+        orb::println(std::move(fmt), std::forward<T>(args)...);
         exit(1);
     }
 
 #ifdef ORB_ASSERT
     template <typename... T>
-    void assertion(bool condition, orb::format_string<T...> fmt, const char* f, int l, T&&... args)
+    void assertion(bool condition, fmt::format_string<T...> fmt, const char* f, int l, T&&... args)
     {
         if (!condition)
         {
             orb::println("");
             orb::println("orblib: Assertion failed at: {}:{}", f, l);
-            orb::panic(orb::move(fmt), orb::forward<T>(args)...);
+            orb::panic(std::move(fmt), std::forward<T>(args)...);
         }
     }
 

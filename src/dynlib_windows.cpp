@@ -54,22 +54,22 @@ namespace orb
         {
         case ERROR_MOD_NOT_FOUND:
         {
-            return orb::format("DLL error {}. Module not found", err);
+            return fmt::format("DLL error {}. Module not found", err);
         }
 
         case ERROR_BAD_EXE_FORMAT:
         {
-            return orb::format("DLL error {}. Bad executable format (32/64 bit mismatch)", err);
+            return fmt::format("DLL error {}. Bad executable format (32/64 bit mismatch)", err);
         }
 
         case ERROR_PROC_NOT_FOUND:
         {
-            return orb::format("DLL error {}. Function could not be found", err);
+            return fmt::format("DLL error {}. Function could not be found", err);
         }
 
         default:
         {
-            return orb::format("Unknown error {}", err);
+            return fmt::format("Unknown error {}", err);
         }
         }
     }

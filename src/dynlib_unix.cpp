@@ -46,14 +46,15 @@ namespace orb
 
     auto dynlib::get_err() -> std::string
     {
-        return orb::format("Dynlib error {}", dlerror());
+        return fmt::format("Dynlib error {}", dlerror());
     }
 
     auto dynlib::get_libfile_path(const orb::path& p) -> orb::path
     {
+        std::string path = fmt::format("{}/lib{}", p.parent(), p.filename());
+
         if (p.extension() == "")
         {
-            std::string path(p.view());
             path += ".";
             path += orb::dynlib_extension;
             return std::move(path);

@@ -2,7 +2,7 @@
 
 #include <chrono>
 
-#include <orb/fmt/format.h>
+#include <fmt/format.h>
 
 namespace orb
 {
@@ -69,23 +69,26 @@ namespace orb
             }
         }
     };
+} // namespace orb
 
-    template <ratio_type TRatio>
-    class orb::formatter<duration<TRatio>>
+template <orb::ratio_type TRatio>
+class fmt::formatter<orb::duration<TRatio>>
+{
+public:
+    constexpr auto parse(format_parse_context& ctx)
     {
-    public:
-        constexpr auto parse(format_parse_context& ctx)
-        {
-            return ctx.begin();
-        }
+        return ctx.begin();
+    }
 
-        template <typename Context>
-        constexpr auto format(const duration<TRatio>& dur, Context& ctx) const
-        {
-            return format_to(ctx.out(), "{} {}", dur.count(), dur.unit());
-        }
-    };
+    template <typename Context>
+    constexpr auto format(const orb::duration<TRatio>& dur, Context& ctx) const
+    {
+        return format_to(ctx.out(), "{} {}", dur.count(), dur.unit());
+    }
+};
 
+namespace orb
+{
     template <watch_type TWatch>
     class timepoint : public std::chrono::time_point<typename TWatch::clock_t>
     {

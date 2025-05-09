@@ -1,7 +1,7 @@
 #pragma once
 
-#include <orb/fmt/base.h>
-#include <orb/fmt/format.h>
+#include <fmt/base.h>
+#include <fmt/format.h>
 #include <orb/time.hpp>
 
 namespace orb
@@ -16,8 +16,8 @@ namespace orb
     }
 
     template <watch_type TWatch = stopwatch, ratio_type TRatio = ms_t>
-    inline void print_chrono(orb::format_string<duration<TRatio>> fmt)
+    inline void print_chrono(fmt::format_string<duration<TRatio>> fmt)
     {
-        orb::println(fmt, _global_timepoint<TWatch>.template elapsed_time<TRatio>());
+        fmt::println(fmt, _global_timepoint<TWatch>.template elapsed_time<TRatio>());
     }
 } // namespace orb
