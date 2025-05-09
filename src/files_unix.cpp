@@ -169,7 +169,7 @@ namespace orb
         std::array<char, 1024> buffer {};
 
         ssize_t total_read = -1;
-        ssize_t read       = 0;
+        ssize_t read       = -1;
 
         std::string content;
 
@@ -185,7 +185,7 @@ namespace orb
             content += std::string_view { buffer.data(), (size_t)read };
         }
 
-        return {};
+        return std::move(content);
     }
 
 } // namespace orb
